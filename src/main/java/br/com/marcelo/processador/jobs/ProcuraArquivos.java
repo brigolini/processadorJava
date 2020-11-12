@@ -1,5 +1,6 @@
 package br.com.marcelo.processador.jobs;
 
+import br.com.marcelo.processador.util.DirHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,11 +21,8 @@ import static java.nio.file.StandardWatchEventKinds.*;
 @Slf4j
 public class ProcuraArquivos {
 
-    @Value("${br.com.marcelo.processador.entrada}")
-    String entrada;
-
-    @Value("${br.com.marcelo.processador.saida}")
-    String saida;
+    @Autowired
+    DirHelper dirHelper;
 
     @Autowired
     CarregaArquivo carregaArquivo;
@@ -34,7 +32,7 @@ public class ProcuraArquivos {
      */
     @Async("procuraArquivoTaskExec")
     public void buscaDadosDisco() {
-        Path dirtoWatch = Path.of(entrada);
+        Path dirtoWatch = dirHelper.getDirEntrada();
         try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
             var key = dirtoWatch.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             while (true) {
@@ -61,10 +59,9 @@ public class ProcuraArquivos {
      * Testa se a cópia de um arquivo foi totalmente terminada. A forma otimizada de se fazer essa operação depende
      * do SO. Como não sabemos onde irá rodar, geramos uma forma mais simples mas que resolve, apesar de não ser eficiente
      * @param path arquivo a ser testado
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws InterruptedException Erro na thread que aguarda meio segundo para ler de novo.
      */
-    public void prontoParaProcessar(Path path) throws IOException, InterruptedException {
+    public void prontoParaProcessar(Path path) throws InterruptedException {
         long tamanho = 0;
         File file = new File(String.valueOf(path));
         while (tamanho != file.length()){

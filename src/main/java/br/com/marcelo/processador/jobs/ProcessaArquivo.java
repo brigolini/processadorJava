@@ -10,6 +10,7 @@ import br.com.marcelo.processador.model.ClienteModel;
 import br.com.marcelo.processador.model.ItemVendaModel;
 import br.com.marcelo.processador.model.VendaModel;
 import br.com.marcelo.processador.model.VendedorModel;
+import br.com.marcelo.processador.util.DirHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,11 +42,9 @@ public class ProcessaArquivo {
     @Autowired
     ClienteDAO clienteDAO;
 
-    @Value("${br.com.marcelo.processador.entrada}")
-    String entrada;
+    @Autowired
+    DirHelper dirHelper;
 
-    @Value("${br.com.marcelo.processador.saida}")
-    String saida;
 
 
     @Async("processaArquivoTaskExec")
@@ -77,15 +76,14 @@ public class ProcessaArquivo {
 
     private void salvaInformacoes(Path nomeArquivo, List<ClienteModel> clientes, List<VendaModel> vendas, List<VendedorModel> vendedores) {
         try {
-
-            Path saida = Paths.get(this.saida, nomeArquivo.toString());
+            Path saida = Paths.get(dirHelper.getDirSaida().toString(), nomeArquivo.toString());
             var resultadoPrograma = String.format("Quantidade de clientes no arquivo de entrada %d\n", clientes.size()) +
                     String.format("Quantidade de vendedores no arquivo de entrada %d\n", vendedores.size()) +
                     String.format("Id da Venda Mais cara %d\n", getIdVendaMaisCara(vendas)) +
                     String.format("O pior Vendedor %s\n", getPiorVendedor(vendas));
             Files.writeString(saida,resultadoPrograma);
         } catch (IOException e) {
-            log.error("Não foi possível gravar no arquivo {}", saida);
+            log.error("Não foi possível gravar no arquivo {}", nomeArquivo);
         }
     }
 
@@ -114,7 +112,7 @@ public class ProcessaArquivo {
         for (Map.Entry<String, List<VendaModel>> vendasVendedor : vendasAgrupadas.entrySet()) {
             double totalVendas = 0d;
             for (VendaModel vendaModel : vendasVendedor.getValue()) {
-                totalVendas += (Double) vendaModel.getItems().stream().mapToDouble(value -> value.getQuantidade() * value.getPreco()).sum();
+                totalVendas += vendaModel.getItems().stream().mapToDouble(value -> value.getQuantidade() * value.getPreco()).sum();
             }
             if (totalVendas < piorTotalVenda) {
                 piorVendedor = vendasVendedor.getKey();
