@@ -71,6 +71,11 @@ public class ProcessaArquivo {
                 log.error(e.getMessage());
             }
         });
+        salvaInformacoes(nomeArquivo, clientes, vendas, vendedores);
+
+    }
+
+    private void salvaInformacoes(Path nomeArquivo, List<ClienteModel> clientes, List<VendaModel> vendas, List<VendedorModel> vendedores) {
         try {
 
             Path saida = Paths.get(this.saida, nomeArquivo.toString());
@@ -82,7 +87,6 @@ public class ProcessaArquivo {
         } catch (IOException e) {
             log.error("Não foi possível gravar no arquivo {}", saida);
         }
-
     }
 
     private long getIdVendaMaisCara(List<VendaModel> vendas) {

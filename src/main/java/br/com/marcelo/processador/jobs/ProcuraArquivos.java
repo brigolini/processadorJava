@@ -29,6 +29,9 @@ public class ProcuraArquivos {
     @Autowired
     CarregaArquivo carregaArquivo;
 
+    /**
+     * Utiliza o WatchService do Java para observar a criação de um novo arquivo.
+     */
     @Async("procuraArquivoTaskExec")
     public void buscaDadosDisco() {
         Path dirtoWatch = Path.of(entrada);
@@ -54,6 +57,13 @@ public class ProcuraArquivos {
         }
     }
 
+    /**
+     * Testa se a cópia de um arquivo foi totalmente terminada. A forma otimizada de se fazer essa operação depende
+     * do SO. Como não sabemos onde irá rodar, geramos uma forma mais simples mas que resolve, apesar de não ser eficiente
+     * @param path arquivo a ser testado
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void prontoParaProcessar(Path path) throws IOException, InterruptedException {
         long tamanho = 0;
         File file = new File(String.valueOf(path));
