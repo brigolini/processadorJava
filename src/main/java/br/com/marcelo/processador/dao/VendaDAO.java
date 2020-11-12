@@ -19,7 +19,7 @@ public class VendaDAO extends DAOGenerico<VendaModel> {
         return new VendaModel(idVenda, getItensVenda(campos[1],idVenda), campos[2]);
     }
 
-    private List<ItemVendaModel> getItensVenda(String vendas,long idVenda) throws ProcessadorException {
+    private List<ItemVendaModel> getItensVenda(String vendas, long idVenda) throws ProcessadorException {
         String[] itens = super.separaArray(vendas);
         List<ItemVendaModel> result = new ArrayList<>();
         int i = 0;

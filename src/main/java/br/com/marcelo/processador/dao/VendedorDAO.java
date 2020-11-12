@@ -1,8 +1,6 @@
 package br.com.marcelo.processador.dao;
 
 import br.com.marcelo.processador.exception.ProcessadorException;
-import br.com.marcelo.processador.model.ClienteModel;
-import br.com.marcelo.processador.model.ModelGenerico;
 import br.com.marcelo.processador.model.VendedorModel;
 import org.springframework.stereotype.Service;
 

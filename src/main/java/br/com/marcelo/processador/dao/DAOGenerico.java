@@ -4,7 +4,6 @@ import br.com.marcelo.processador.enums.TipoRegistroEnum;
 import br.com.marcelo.processador.exception.ProcessadorException;
 import br.com.marcelo.processador.model.ModelGenerico;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public abstract class DAOGenerico <T extends ModelGenerico>{
