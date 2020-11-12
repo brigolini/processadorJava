@@ -10,7 +10,7 @@
     </parent>
     <groupId>br.com.marcelo</groupId>
     <artifactId>processador</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>processador</name>
     <description>Demo project for Spring Boot</description>
 
@@ -50,7 +50,9 @@
     </dependencies>
 
     <build>
+        <finalName>processador</finalName>
         <plugins>
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

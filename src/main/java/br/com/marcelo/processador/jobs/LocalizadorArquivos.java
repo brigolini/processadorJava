@@ -1,5 +1,6 @@
 package br.com.marcelo.processador.jobs;
 
+import br.com.marcelo.processador.exception.ProcessadorException;
 import br.com.marcelo.processador.util.DirHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,20 +18,27 @@ import static java.nio.file.StandardWatchEventKinds.*;
 
 @Service
 @Slf4j
-public class ProcuraArquivos {
+public class LocalizadorArquivos {
 
     @Autowired
     DirHelper dirHelper;
 
     @Autowired
-    CarregaArquivo carregaArquivo;
+    CarregadorArquivo carregadorArquivo;
 
     /**
      * Utiliza o WatchService do Java para observar a criação de um novo arquivo.
      */
     @Async("procuraArquivoTaskExec")
     public void buscaDadosDisco() {
-        Path dirtoWatch = dirHelper.getDirEntrada();
+        Path dirtoWatch = null;
+        try {
+            dirtoWatch = dirHelper.getDirEntrada();
+        } catch (ProcessadorException e) {
+            log.error(e.getMessage());
+            log.error("Programa terminado de forma anormal");
+            System.exit(-1);
+        }
         try (WatchService watchService = FileSystems.getDefault().newWatchService()) {
             var key = dirtoWatch.register(watchService, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
             while (true) {
@@ -41,7 +49,7 @@ public class ProcuraArquivos {
                         log.info("Encontrado arquivo a processar: {} ", event.context());
                         Path arquivoProcessar = Paths.get(dirtoWatch.toString(), arquivo.toString());
                         prontoParaProcessar(arquivoProcessar);
-                        carregaArquivo.buscaDadosDisco(arquivoProcessar);
+                        carregadorArquivo.buscaDadosDisco(arquivoProcessar);
                     }
                     watchKey.reset();
                 }

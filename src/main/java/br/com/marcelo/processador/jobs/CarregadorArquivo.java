@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class CarregaArquivo {
+public class CarregadorArquivo {
 
     @Autowired
     ProcessadorArquivo processadorArquivo;

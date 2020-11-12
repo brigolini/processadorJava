@@ -1,5 +1,6 @@
 package br.com.marcelo.processador.jobs;
 
+import br.com.marcelo.processador.exception.ProcessadorException;
 import br.com.marcelo.processador.service.ProcessadorService;
 import br.com.marcelo.processador.util.DirHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,8 @@ public class ProcessadorArquivo {
             Files.writeString(saida,resultadoPrograma);
         } catch (IOException e) {
             log.error("Não foi possível gravar no arquivo {}", nomeArquivo);
+        } catch (ProcessadorException e) {
+            log.error(e.getMessage());
         }
     }
 
